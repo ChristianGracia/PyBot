@@ -6,17 +6,12 @@ from selenium.webdriver.common.by import By
 
 from classes.stocktwits_response import StockTwitsResponse
 
-def set_chrome_options() -> None:
-    chrome_options = Options()
-    # chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.add_argument("--start-maximized")
-    return chrome_options
+
 
 class ChromeDriver:
     def __init__(self):
-        self.driver = webdriver.Chrome(options=set_chrome_options(), executable_path=r"{}".format(os.getenv('CHROME_DRIVER_URL')))  
+        self.driver = webdriver.Chrome(options=self.set_chrome_options(), executable_path=r"{}".format(os.getenv('CHROME_DRIVER_URL')))
+
     def post_stocktwits(self, username, password, ticker, message, positive_sentiment, randomization):
         self.driver.get("https://www.stocktwits.com")
 
@@ -59,7 +54,15 @@ class ChromeDriver:
 
         self.driver.quit()
 
-        response = StockTwitsResponse(ticker, 'Bullish' if positive_sentiment else 'earish', message, random_int if randomization else False)
+        response = StockTwitsResponse(ticker, 'Bullish' if positive_sentiment else 'Bearish', message, random_int if randomization else False)
 
         return json.dumps(response.__dict__)
+        
+    def set_chrome_options(self):
+        chrome_options = Options()
+        # chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
+        chrome_options.add_argument("--start-maximized")
+        return chrome_options
         
