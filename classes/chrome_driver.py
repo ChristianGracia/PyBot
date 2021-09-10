@@ -10,8 +10,13 @@ class ChromeDriver:
     def __init__(self):
         self.driver = webdriver.Chrome(options=self.set_chrome_options(), executable_path=r"{}".format(os.getenv('CHROME_DRIVER_URL')))
 
-    def post_stocktwits(self, username, password, ticker, message, positive_sentiment, randomization):
+    def post_stocktwits(self, username, password, request_body):
         self.driver.get("https://www.stocktwits.com")
+
+        ticker = request_body['ticker']
+        message = request_body['message']
+        positive_sentiment = request_body['positive_sentiment']
+        randomization = request_body['randomization']
 
         # Add random repeating character to post to avoid 60 min duplicate post limit
         if randomization:
