@@ -6,8 +6,6 @@ from selenium.webdriver.common.by import By
 
 from classes.stocktwits_response import StockTwitsResponse
 
-
-
 class ChromeDriver:
     def __init__(self):
         self.driver = webdriver.Chrome(options=self.set_chrome_options(), executable_path=r"{}".format(os.getenv('CHROME_DRIVER_URL')))
