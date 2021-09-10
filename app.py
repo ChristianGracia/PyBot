@@ -1,5 +1,4 @@
-from flask import Flask, json
-import os
+from flask import Flask
 from routes.post import post
 from dotenv import load_dotenv
 
@@ -14,4 +13,3 @@ def main():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0',port=5000)
-
