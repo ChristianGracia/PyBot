@@ -1,4 +1,4 @@
-import os, time, random, json
+import os, time, random, json, datetime
 from selenium.webdriver.chrome.options import Options
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -40,7 +40,7 @@ class ChromeDriver:
 
         # Add random repeating character to post to avoid 60 min duplicate post limit
         if randomization:
-            random_int = random.randint(0, 50)
+            random_int = datetime.datetime.now().minute + datetime.datetime.now().second
             message += ''.join(random.choice("!") for i in range(random_int))
 
         formatted_message = "${} {}".format(ticker, message)
