@@ -1,8 +1,10 @@
-import os, time, random
+import os, time, random, json
 from selenium.webdriver.chrome.options import Options
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
+
+from classes.stocktwits_response import StockTwitsResponse
 
 def set_chrome_options() -> None:
     chrome_options = Options()
@@ -38,7 +40,8 @@ class ChromeDriver:
 
         # Add random repeating character to post to avoid 60 min duplicate post limit
         if randomization:
-            message += ''.join(random.choice("!") for i in range(random.randint(0, 50)))
+            random_int = random.randint(0, 50)
+            message += ''.join(random.choice("!") for i in range(random_int))
 
         formatted_message = "${} {}".format(ticker, message)
 
@@ -58,5 +61,7 @@ class ChromeDriver:
 
         self.driver.quit()
 
-        return 'Ticker: {}, Sentiment: {}, Post: {}'.format(ticker, 'bullish' if positive_sentiment else 'bearish', message)
+        response = StockTwitsResponse(ticker, 'Bullish' if positive_sentiment else 'earish', message, random_int if randomization else False)
+
+        return json.dumps(response.__dict__)
         
