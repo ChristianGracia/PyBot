@@ -10,11 +10,9 @@ def post_stocktwits():
 
     request_body = request.get_json()
 
-    message = request_body['message']
-    ticker = request_body['ticker']
-    positive_sentiment = request_body['positive_sentiment']
-    randomization = request_body['randomization']
-
     chrome_driver = ChromeDriver()
 
-    return chrome_driver.post_stocktwits(os.getenv('ST_USERNAME'), os.getenv('ST_PASSWORD'), ticker, message, positive_sentiment, randomization)
+    return chrome_driver.post_stocktwits(
+        os.getenv('ST_USERNAME'), os.getenv('ST_PASSWORD'), request_body['ticker'],
+        request_body['message'], request_body['positive_sentiment'], request_body['randomization']
+    )
