@@ -20,7 +20,10 @@ class ChromeDriver:
     def post_stocktwits(self, username, password, ticker, message, positive_sentiment, randomization):
         self.driver.get("https://www.stocktwits.com")
 
-        time.sleep(1)
+        # Add random repeating character to post to avoid 60 min duplicate post limit
+        if randomization:
+            random_int = datetime.datetime.now().minute + datetime.datetime.now().second
+            message += ''.join(random.choice("!") for i in range(random_int))
 
         # Login
         login_button = self.driver.find_elements_by_xpath('//*[@id="mainNavigation"]/div[3]/div/div/div[1]/button')[0]
@@ -36,12 +39,7 @@ class ChromeDriver:
         submit_credentials_button = self.driver.find_elements_by_xpath('//*[@id="app"]/div/div/div[4]/div[2]/div/form/div[2]/div[1]/button')[0]
         submit_credentials_button.click()
 
-        time.sleep(1)
-
-        # Add random repeating character to post to avoid 60 min duplicate post limit
-        if randomization:
-            random_int = datetime.datetime.now().minute + datetime.datetime.now().second
-            message += ''.join(random.choice("!") for i in range(random_int))
+        time.sleep(0.5)
 
         formatted_message = "${} {}".format(ticker, message)
 
