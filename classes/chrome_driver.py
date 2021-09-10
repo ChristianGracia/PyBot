@@ -55,7 +55,7 @@ class ChromeDriver:
         response = StockTwitsResponse(ticker, 'Bullish' if positive_sentiment else 'Bearish', message, random_int if randomization else False)
 
         return json.dumps(response.__dict__)
-        
+
     def set_chrome_options(self):
         chrome_options = Options()
         # chrome_options.add_argument("--headless")
