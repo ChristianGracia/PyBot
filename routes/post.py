@@ -16,6 +16,7 @@ def set_chrome_options() -> None:
     # chrome_options.add_argument("--headless")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--start-maximized")
     return chrome_options
 
 @post.route('/st') 
@@ -37,26 +38,31 @@ def post_stocktwits():
     submit_button = driver.find_elements_by_xpath('//*[@id="app"]/div/div/div[4]/div[2]/div/form/div[2]/div[1]/button')[0]
     submit_button.click()
 
-    time.sleep(5)
+    time.sleep(3)
 
     # Navigate to wanted Stock Symbol
     ticker = 'SPY'
-    post_button = driver.find_elements_by_xpath('//*[@id="mainNavigation"]/div/div[5]/div[1]/span/button')[0]
+    bullish_button = driver.find_elements_by_xpath('//*[@id="app"]/div/div/div[3]/div/div/div[1]/div/div/div[1]/div/div[2]/div[2]/div/div[1]/div/div[1]')[0]
+    bullish_button.click()
 
-    post_button.click()
+    message = "${} Bullish".format(ticker)
+
+    message_input = driver.find_elements_by_xpath('//*[@id="app"]/div/div/div[3]/div/div/div[1]/div/div/div[1]/div/div[2]/div[1]/div/div/div[2]/div')[0]
+    message_input.click()
+    message_input.send_keys(message)
     # driver.get("https://stocktwits.com/symbol/{}".format(ticker))
     # time.sleep(5)
 
     # Post Message
-    message = "${} Bullish".format(ticker)
     # driver.findElement(By.xpath("//*[@id='app']/div/div/div[3]/div/div/div[1]/div/div/div[1]/div/div[2]")).click();
     # post_button = driver.find_elements_by_xpath('//*[@id="mainNavigation"]/div/div[5]/div[1]/span/button')[0]
     # post_button.click()
     # message_input = driver.find_elements_by_xpath('//*[@id="app"]/div/div/div[4]/div[2]/div/div[2]/div/div[2]/input')[0]
     # message_input.send_keys(message)
     
-    # submit_post_button = driver.find_elements_by_xpath('//*[@id="app"]/div/div/div[4]/div[2]/div/div[2]/div/div[3]/div[1]/button')[0]
-    # submit_post_button.click()
+    submit_post_button = driver.find_elements_by_xpath('//*[@id="app"]/div/div/div[3]/div/div/div[1]/div/div/div[1]/div/div[3]/div[1]/button')[0]
+    submit_post_button.click()
+    time.sleep(3)
 
     driver.quit()
 
