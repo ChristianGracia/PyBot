@@ -1,2 +1,3 @@
 Flask==1.1.1
 selenium==3.141.0
+DOT_ENV==0.15.0
