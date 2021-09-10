@@ -17,15 +17,18 @@ def set_chrome_options() -> None:
     chrome_options.add_argument("--start-maximized")
     return chrome_options
 
-@post.route('/st') 
+@post.route('/st', methods = ['POST']) 
 def post_stocktwits():
 
     request_body = request.get_json()
-    print(request_body)
+    message = request_body['message']
+    ticker = request_body['ticker']
+    positive_sentiment = request_body['bullish']
 
     driver = webdriver.Chrome(options=set_chrome_options(), executable_path=r"{}".format(os.getenv('CHROME_DRIVER_URL')))  
     driver.get("https://www.stocktwits.com")
-    driver.implicitly_wait(5)
+
+    time.sleep(1)
 
     # Login
     login_button = driver.find_elements_by_xpath('//*[@id="mainNavigation"]/div[3]/div/div/div[1]/button')[0]
@@ -38,27 +41,27 @@ def post_stocktwits():
     password_input.send_keys(os.getenv('ST_PASSWORD'))
 
     
-    submit_button = driver.find_elements_by_xpath('//*[@id="app"]/div/div/div[4]/div[2]/div/form/div[2]/div[1]/button')[0]
-    submit_button.click()
+    submit_credentials_button = driver.find_elements_by_xpath('//*[@id="app"]/div/div/div[4]/div[2]/div/form/div[2]/div[1]/button')[0]
+    submit_credentials_button.click()
 
-    time.sleep(3)
+    time.sleep(1)
 
-    message = "${} {}".format(request_body['ticker'], request_body['message'])
+    formatted_message = "${} {}".format(ticker, message)
 
     sentiment_xpath = '//*[@id="app"]/div/div/div[3]/div/div/div[1]/div/div/div[1]/div/div[2]/div[2]/div/div[1]/div/div[{}]'
 
-    sentiment_button = driver.find_elements_by_xpath(sentiment_xpath.format(1 if request_body['bullish'] else 2))[0]
+    sentiment_button = driver.find_elements_by_xpath(sentiment_xpath.format(1 if positive_sentiment else 2))[0]
     sentiment_button.click()
 
     message_input = driver.find_elements_by_xpath('//*[@id="app"]/div/div/div[3]/div/div/div[1]/div/div/div[1]/div/div[2]/div[1]/div/div/div[2]/div')[0]
     message_input.click()
-    message_input.send_keys(message)
+    message_input.send_keys(formatted_message)
     
     submit_post_button = driver.find_elements_by_xpath('//*[@id="app"]/div/div/div[3]/div/div/div[1]/div/div/div[1]/div/div[3]/div[1]/button')[0]
-    # submit_post_button.click()
+    submit_post_button.click()
 
-    time.sleep(3)
+    time.sleep(1)
 
     driver.quit()
 
-    return 'Post: {}'.format(message)
+    return 'Ticker: {}, Sentiment: {}, Post: {}'.format(ticker, 'bullish' if positive_sentiment else 'bearish', message)
