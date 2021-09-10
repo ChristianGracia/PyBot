@@ -1,8 +1,9 @@
 from flask import Flask, json
-
 import os
-
 from routes.post import post
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 app.register_blueprint(post, url_prefix='/post')
