@@ -16,17 +16,20 @@ class ChromeDriver:
         self.username = username
         self.password = password
 
-    def post_stocktwits(self):
-        self.driver.get("https://www.stocktwits.com")
-
         # Add random repeating character to post to avoid 60 min duplicate post limit
         if self.randomization:
-            random_int = datetime.datetime.now().minute + datetime.datetime.now().second
-            self.message += ''.join(random.choice("!") for i in range(random_int))
+            self.random_int = datetime.datetime.now().minute + datetime.datetime.now().second
+            self.message += ''.join(random.choice("!") for i in range(self.random_int))
 
-        # Login
+    def login_and_post_stocktwits(self):
+        self.driver.get("https://www.stocktwits.com")
         self.login()
+        self.post()
+        self.driver.quit()
 
+        return self.create_response()
+
+    def post(self):
         formatted_message = "${} {}".format(self.ticker, self.message)
 
         sentiment_xpath = '//*[@id="app"]/div/div/div[3]/div/div/div[1]/div/div/div[1]/div/div[2]/div[2]/div/div[1]/div/div[{}]'
@@ -40,31 +43,38 @@ class ChromeDriver:
         
         submit_post_button = self.driver.find_elements_by_xpath('//*[@id="app"]/div/div/div[3]/div/div/div[1]/div/div/div[1]/div/div[3]/div[1]/button')[0]
         submit_post_button.click()
-
         time.sleep(1)
+    def spam(self):
+        self.driver.get("https://www.stocktwits.com")
+        self.login()
 
-        self.driver.quit()
+        print('30 seconds to get through captcha')
+        time.sleep(30)
 
-        response = StockTwitsResponse(self.ticker, 'Bullish' if self.positive_sentiment else 'Bearish', self.message, random_int if self.randomization else False)
-
-        return json.dumps(response.__dict__)
+        print('loop starting')
+        for x in range(30):
+            self.post();
+            time.sleep(15)
+            print(self.create_response())
 
     def login(self):
         login_button = self.driver.find_elements_by_xpath('//*[@id="mainNavigation"]/div[3]/div/div/div[1]/button')[0]
         login_button.click()
 
-        # Enter login credentials
         user_input = self.driver.find_elements_by_xpath('//*[@id="app"]/div/div/div[4]/div[2]/div/form/div[1]/div[1]/label/input')[0]
         user_input.send_keys(self.username)
         password_input = self.driver.find_elements_by_xpath('//*[@id="app"]/div/div/div[4]/div[2]/div/form/div[1]/div[2]/label/input')[0]
         password_input.send_keys(self.password)
 
+        # submit_credentials_button = self.driver.find_elements_by_xpath('//*[@id="app"]/div/div/div[4]/div[2]/div/form/div[2]/div[1]/button')[0]
+        # submit_credentials_button.click()
+
+        time.sleep(1)
+
+    def create_response(self):
+        response = StockTwitsResponse(self.ticker, 'Bullish' if self.positive_sentiment else 'Bearish', self.message, self.random_int if self.randomization else False)
+        return json.dumps(response.__dict__)
         
-        submit_credentials_button = self.driver.find_elements_by_xpath('//*[@id="app"]/div/div/div[4]/div[2]/div/form/div[2]/div[1]/button')[0]
-        submit_credentials_button.click()
-
-        time.sleep(0.5)
-
     def set_chrome_options(self):
         chrome_options = Options()
         # chrome_options.add_argument("--headless")
