@@ -7,5 +7,5 @@ post = Blueprint('post', __name__)
 
 @post.route('/st', methods = ['POST']) 
 def post_stocktwits():
-    chrome_driver = ChromeDriver()
-    return chrome_driver.post_stocktwits(os.getenv('ST_USERNAME'), os.getenv('ST_PASSWORD'), request.get_json())
+    chrome_driver = ChromeDriver(os.getenv('ST_USERNAME'), os.getenv('ST_PASSWORD'), request.get_json())
+    return chrome_driver.post_stocktwits()
