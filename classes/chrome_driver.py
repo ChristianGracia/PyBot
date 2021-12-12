@@ -7,12 +7,12 @@ from selenium.webdriver.common.by import By
 from classes.stocktwits_response import StockTwitsResponse
 
 class ChromeDriver:
-    def __init__(self, username, password, request_body):
+    def __init__(self, username, password, data):
         self.driver = webdriver.Chrome(options=self.set_chrome_options(), executable_path=r"{}".format(os.getenv('CHROME_DRIVER_URL')))
-        self.ticker = request_body['ticker']
-        self.message = request_body['message']
-        self.positive_sentiment = request_body['positive_sentiment']
-        self.randomization = request_body['randomization']
+        self.ticker = data['ticker']
+        self.message = data['message']
+        self.positive_sentiment = data['positive_sentiment']
+        self.randomization = data['randomization']
         self.username = username
         self.password = password
 
@@ -22,6 +22,7 @@ class ChromeDriver:
             self.message += ''.join(random.choice("!") for i in range(self.random_int))
 
     def login_and_post_stocktwits(self):
+        self.driver.set_window_size(1920, 1080)
         self.driver.get("https://www.stocktwits.com")
         self.login()
         self.post()
@@ -44,6 +45,7 @@ class ChromeDriver:
         submit_post_button = self.driver.find_elements_by_xpath('//*[@id="app"]/div/div/div[3]/div/div/div[1]/div/div/div[1]/div/div[3]/div[1]/button')[0]
         submit_post_button.click()
         time.sleep(1)
+
     def spam(self):
         self.driver.get("https://www.stocktwits.com")
         self.login()
@@ -63,8 +65,14 @@ class ChromeDriver:
 
         user_input = self.driver.find_elements_by_xpath('//*[@id="app"]/div/div/div[4]/div[2]/div/form/div[1]/div[1]/label/input')[0]
         user_input.send_keys(self.username)
+
+        time.sleep(1)
         password_input = self.driver.find_elements_by_xpath('//*[@id="app"]/div/div/div[4]/div[2]/div/form/div[1]/div[2]/label/input')[0]
         password_input.send_keys(self.password)
+
+        time.sleep(2)
+        captcha_button = self.driver.find_elements_by_xpath("//iframe[starts-with(@name,'a-')]")[0]
+        captcha_button.click()
 
         # submit_credentials_button = self.driver.find_elements_by_xpath('//*[@id="app"]/div/div/div[4]/div[2]/div/form/div[2]/div[1]/button')[0]
         # submit_credentials_button.click()
@@ -78,6 +86,7 @@ class ChromeDriver:
     def set_chrome_options(self):
         chrome_options = Options()
         # chrome_options.add_argument("--headless")
+        chrome_options.add_argument('Mozilla/5.0 (Windows NT 4.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2049.0 Safari/537.36')
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
         chrome_options.add_argument("--start-maximized")
